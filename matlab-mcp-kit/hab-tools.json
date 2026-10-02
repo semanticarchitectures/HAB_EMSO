@@ -1,0 +1,270 @@
+{
+  "tools": [
+    {
+      "name": "hab_list_emitters",
+      "title": "List HAB emitters",
+      "description": "List the notional radar emitter types in the HAB EMSO seminar model (fixed, marine, airborne) with frequency, power, pulse width and scan. Call this first to get valid emitter IDs. Returns JSON. All values are NOTIONAL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "hab_intercept_range",
+      "title": "HAB intercept range",
+      "description": "Maximum range (km) at which a high-altitude balloon with a notional Philowave-class filter-bank detector detects a radar's pulses: the smaller of the one-way link-budget range and the radio horizon. Returns JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "emitterId": {
+            "type": "string",
+            "description": "Emitter ID from hab_list_emitters, e.g. MAR-X1"
+          },
+          "altitude_km": {
+            "type": "number",
+            "description": "Balloon altitude in km, 1-40 (typically 15-25)"
+          },
+          "lobe": {
+            "type": "string",
+            "description": "'main' for mainbeam illumination (scan-timing geolocation) or 'side' for sidelobes (needed at 3+ balloons for TDOA)"
+          }
+        },
+        "required": [
+          "emitterId",
+          "altitude_km",
+          "lobe"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "hab_geolocation_accuracy",
+      "title": "HAB geolocation accuracy",
+      "description": "Predicted geolocation accuracy (CEP50 in meters; -1 if not observable) of an emitter by nHAB balloons evenly spaced on a ring around the area-of-interest center, accounting for which balloons can hear the emitter. Returns JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "emitterId": {
+            "type": "string",
+            "description": "Emitter ID from hab_list_emitters"
+          },
+          "nHAB": {
+            "type": "integer",
+            "description": "Number of balloons, 3-12"
+          },
+          "ringRadius_km": {
+            "type": "number",
+            "description": "Ring radius around the AOI center, km"
+          },
+          "east_km": {
+            "type": "number",
+            "description": "Emitter east offset from AOI center, km"
+          },
+          "north_km": {
+            "type": "number",
+            "description": "Emitter north offset from AOI center, km"
+          },
+          "method": {
+            "type": "string",
+            "description": "'scan' (scan timing), 'tdoa' (time difference of arrival) or 'both'"
+          }
+        },
+        "required": [
+          "emitterId",
+          "nHAB",
+          "ringRadius_km",
+          "east_km",
+          "north_km",
+          "method"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "hab_evaluate_design",
+      "title": "Evaluate HAB constellation design",
+      "description": "Cost, coverage and payload SWaP of a balloon EMSO constellation over a 400 x 400 km littoral area with fixed, marine and airborne radars (notional model). Takes about 1-2 s. Returns JSON with cost_USD, effGeoCoverage, per-class coverage, fracOnStation, payload mass/power and feasible (mass <= 4 kg, power <= 25 W).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "nHAB": {
+            "type": "integer",
+            "description": "Number of balloons, 3-8"
+          },
+          "ringRadius_km": {
+            "type": "number",
+            "description": "Station ring radius, 20-120 km"
+          },
+          "nChannels": {
+            "type": "integer",
+            "description": "Filter-bank channels across 2-18 GHz: 8, 16, 32 or 64"
+          },
+          "sigmaSync_ns": {
+            "type": "number",
+            "description": "Inter-balloon clock error, 5-100 ns"
+          },
+          "dfOption": {
+            "type": "boolean",
+            "description": "true to add amplitude-comparison direction finding (needed for airborne ESA radars; ~4x channel hardware)"
+          },
+          "altBandHalf_km": {
+            "type": "number",
+            "description": "Altitude-control authority, +- km around 20 km float, 3-4.5"
+          }
+        },
+        "required": [
+          "nHAB",
+          "ringRadius_km",
+          "nChannels",
+          "sigmaSync_ns",
+          "dfOption",
+          "altBandHalf_km"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "hab_identify_emitter",
+      "title": "Identify emitter from pulse features",
+      "description": "Match pulse descriptor features a filter-bank detector can measure against the notional emitter library. Returns the filter channel and the top three matches with scores 0-1 as JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "frequency_GHz": {
+            "type": "number",
+            "description": "Carrier frequency, 2-18 GHz (only the 500 MHz channel is used)"
+          },
+          "pulseWidth_us": {
+            "type": "number",
+            "description": "Pulse width, microseconds"
+          },
+          "pri_us_list": {
+            "type": "string",
+            "description": "PRI value(s) in microseconds as comma-separated text, e.g. '500' or '950,980,1000,1020,1050'"
+          },
+          "scanType": {
+            "type": "string",
+            "description": "'rotating', 'raster' (periodic electronic scan) or 'irregular'"
+          },
+          "scanPeriod_s": {
+            "type": "number",
+            "description": "Scan or rotation period in seconds; 0 if unknown"
+          }
+        },
+        "required": [
+          "frequency_GHz",
+          "pulseWidth_us",
+          "pri_us_list",
+          "scanType",
+          "scanPeriod_s"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "hab_run_core_tests",
+      "title": "Run HAB library regression tests",
+      "description": "Run the 13 regression tests of the HAB EMSO pw library and report PASS/FAIL for each (about 30 s).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "signatures": {
+    "hab_list_emitters": {
+      "function": "hab_list_emitters",
+      "input": {
+        "order": []
+      }
+    },
+    "hab_intercept_range": {
+      "function": "hab_intercept_range",
+      "input": {
+        "order": [
+          "emitterId",
+          "altitude_km",
+          "lobe"
+        ]
+      }
+    },
+    "hab_geolocation_accuracy": {
+      "function": "hab_geolocation_accuracy",
+      "input": {
+        "order": [
+          "emitterId",
+          "nHAB",
+          "ringRadius_km",
+          "east_km",
+          "north_km",
+          "method"
+        ]
+      }
+    },
+    "hab_evaluate_design": {
+      "function": "hab_evaluate_design",
+      "input": {
+        "order": [
+          "nHAB",
+          "ringRadius_km",
+          "nChannels",
+          "sigmaSync_ns",
+          "dfOption",
+          "altBandHalf_km"
+        ]
+      }
+    },
+    "hab_identify_emitter": {
+      "function": "hab_identify_emitter",
+      "input": {
+        "order": [
+          "frequency_GHz",
+          "pulseWidth_us",
+          "pri_us_list",
+          "scanType",
+          "scanPeriod_s"
+        ]
+      }
+    },
+    "hab_run_core_tests": {
+      "function": "hab_run_core_tests",
+      "input": {
+        "order": []
+      }
+    }
+  }
+}

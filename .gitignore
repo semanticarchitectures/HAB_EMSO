@@ -1,0 +1,23 @@
+# macOS / editors
+.DS_Store
+*.asv
+*.autosave
+*~
+
+# MATLAB build and cache output
+slprj/
+*.slxc
+codegen/
+*.mex*
+deploy/
+
+# Files the demos generate at run time
+hab_emso/demos/agentic_ai/A1_agentic_toolkit/pdw_sample.csv
+hab_emso/demos/agentic_ai/A1_agentic_toolkit/pdw_sample_truth.csv
+hab_emso/demos/agentic_ai/A2_mcp_production_server/resources/
+designReview_log.json
+HAB_EMSO_SoS.slx
+HAB_EMSO_Profile.xml
+
+# Machine-specific config written by the MCP installer (contains local paths)
+matlab-mcp-kit/claude_desktop_config.snippet.json

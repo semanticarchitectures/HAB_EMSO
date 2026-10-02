@@ -1,0 +1,9 @@
+function hab_list_emitters()
+%HAB_LIST_EMITTERS MCP custom tool: print the notional emitter library as JSON.
+lib = pw.emitterLibrary();
+s = struct('id', {lib.id}, 'class', {lib.class}, ...
+    'frequency_GHz', num2cell([lib.fc]/1e9), 'peakPower_kW', num2cell([lib.Ppeak_W]/1e3), ...
+    'pulseWidth_us', num2cell([lib.PW_s]*1e6), 'scanType', {lib.scanType}, ...
+    'scanPeriod_s', num2cell([lib.scanPeriod_s]), 'description', {lib.description});
+disp(jsonencode(struct('note', 'NOTIONAL seminar values', 'emitters', s)));
+end

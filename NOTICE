@@ -1,0 +1,11 @@
+HAB_EMSO
+Copyright 2026 Semantic Architectures
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It contains no MathWorks software. MATLAB, Simulink, MATLAB toolboxes, the
+MATLAB MCP Server and MathWorks add-ons are products of The MathWorks, Inc.
+and are licensed separately under MathWorks' own terms.
+
+All emitter, receiver, balloon, wind and cost parameters are notional. They
+are not Philowave specifications and do not describe any fielded system.

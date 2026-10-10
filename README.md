@@ -26,4 +26,8 @@ Each demo is a sectioned script that runs on base MATLAB and uses a toolbox when
 - **Not yet run:** the toolbox-specific branches (Phased Array, Radar, Sensor Fusion, Global Optimization), M4 (System Composer), the A2 build and deploy (Compiler SDK and MATLAB Production Server), and the A3 LLM paths.
 - **Known issue:** the closing "lesson" text in `E5_decide_act_assess.m` is fixed text and can contradict the numbers from a given run.
 
-No license has been chosen for this repository yet.
+## License
+
+Licensed under the [Apache License 2.0](LICENSE). Copyright 2026 Semantic Architectures.
+
+This repository contains no MathWorks software. MATLAB, its toolboxes, the MATLAB MCP Server and the MathWorks add-ons used by some demos are licensed separately by MathWorks, and you need your own MATLAB license to run the code.
